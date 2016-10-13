@@ -37,3 +37,5 @@
 *.sdf
 *.filters
 *.vcxproj
+/MotionManipulation/x64/Debug/MotionMa.1BCDA6D6.tlog
+*.ilk
