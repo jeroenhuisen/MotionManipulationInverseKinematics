@@ -27,3 +27,13 @@
 *.exe
 *.out
 *.app
+/Debug
+/.vs/MotionManipulation/v14
+/MotionManipulation/Debug/MotionMa.1BCDA6D6.tlog
+*.log
+*.idb
+*.pdb
+*.opendb
+*.sdf
+*.filters
+*.vcxproj
