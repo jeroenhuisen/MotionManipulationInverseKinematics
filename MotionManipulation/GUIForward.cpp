@@ -17,6 +17,7 @@ GUIForward::GUIForward() :
 	calculateButton.signal_clicked().connect(sigc::mem_fun(*this, &GUIForward::on_button_clicked));
 	add(box);
 
+	//put it to 128 for no real reason just to limit it without being annoying
 	entryThetaM.set_max_length(128);
 	entryThetaP.set_max_length(128);
 	entryThetaD.set_max_length(128);
@@ -26,7 +27,8 @@ GUIForward::GUIForward() :
 	box.add(calculateButton);
 
 	textBuffer = Gtk::TextBuffer::create();
-	textBuffer->set_text("textBuffer text");
+	// Only the first two angles are required
+	textBuffer->set_text("Please enter the angles");
 
 	returnText.set_buffer(textBuffer);
 	box.add(returnText);
@@ -55,21 +57,20 @@ void GUIForward::on_button_clicked() {
 	std::cout << "input: " << textThetaM << ", parsed: " << thetaM << std::endl;
 	std::cout << "input: " << textThetaP << ", parsed: " << thetaP << std::endl;
 	
-	mat result;
+	//mat result;
 	std::pair<float, float> coordinates;
 	
 	if (thetaDEntered){
 		float thetaD = parseAngle(textThetaD);
 		std::cout << "input: " << textThetaD << ", parsed: " << thetaD << std::endl;
-		result = mfr.rotate(thetaM, thetaP, thetaD);
+		coordinates = mF.rotateCoordinates(thetaM, thetaP, thetaD);
 		
 	}
 	else {
 		std::cout << "input: No input for thetaD using the restriction" << std::endl;
 		//result = mfr.rotate(thetaM, thetaP);
-		coordinates = mfr.rotateCoordinates(thetaM, thetaP);
+		coordinates = mF.rotateCoordinates(thetaM, thetaP);
 	}
-	float angle = mfr.rotateCoordinatesAndAngle(thetaM, thetaP);
 	std::string coordinatesText = std::to_string(coordinates.first) + ", " + std::to_string(coordinates.second);
 	textBuffer->set_text(coordinatesText);
 	returnText.set_buffer(textBuffer);

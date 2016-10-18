@@ -4,7 +4,7 @@
 #include <exprtk.hpp>
 #include <iostream>
 
-#include "MiddleFingerRotation.h"
+#include "MiddleFinger.h"
 
 class GUIForward : public Gtk::Window {
 public:
@@ -27,7 +27,7 @@ protected:
 	Glib::RefPtr<Gtk::TextBuffer> textBuffer;
 
 	
-	MiddleFingerRotation mfr;
+	MiddleFinger mF;
 
 	float parseAngle(std::string angleString);
 };
