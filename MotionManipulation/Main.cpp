@@ -31,11 +31,12 @@ int main(int argc, char** argv){
 
 	MiddleFingerRotation mfr;
 
-	a = mfr.rotate(pi / 3, (-1 * pi) / 2), 2*(-1 * pi)/3;
+	a = mfr.rotate(pi / 3, (-1 * pi) / 2, (-1 * pi)/3);
 	roundMat(a);
 	cout << a << endl;
-	a = mfr.rotate(pi/3, (-1*pi)/2);
+	a = mfr.rotate(pi / 3, (-1 * pi) / 3);
 	roundMat(a);
+	mfr.rotateCoordinatesAndAngle(pi / 3, (-1 * pi) / 3);
 	cout << a;
 
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "com.kinematics.ForwardGUI", Gio::APPLICATION_HANDLES_COMMAND_LINE);

@@ -57,7 +57,7 @@ mat MiddleFingerRotation::rotate(float thetaM, float thetaP, float thetaD){
 	return result;
 }
 mat MiddleFingerRotation::rotate(float thetaM, float thetaP) {
-	rotation1.at(0, 0) = cos(thetaM);
+	/*rotation1.at(0, 0) = cos(thetaM);
 	rotation1.at(0, 1) = -1 * sin(thetaM);
 	rotation1.at(1, 0) = sin(thetaM);
 	rotation1.at(1, 1) = cos(thetaM);
@@ -76,7 +76,22 @@ mat MiddleFingerRotation::rotate(float thetaM, float thetaP) {
 	result *= rotation2;
 	result *= translation2;
 	result *= rotation3;
-	result *= translation3;
+	result *= translation3;*/
 
-	return result;
+	return 	rotate(thetaM, thetaP, 2 * thetaP / 3);
+}
+
+std::pair<float, float> MiddleFingerRotation::rotateCoordinates(float thetaM, float thetaP) {
+	mat result = rotate(thetaM, thetaP);
+	return std::make_pair(result.at(0, 3), result.at(1, 3) );
+}
+
+float MiddleFingerRotation::rotateCoordinatesAndAngle(float thetaM, float thetaP) {
+	mat result = rotate(thetaM, thetaP);
+	std::pair<float, float> coordiantes = std::make_pair(result.at(0, 3), result.at(1, 3));
+	float angle = acos(result.at(0, 0));
+	std::cout << angle << std::endl;
+	angle = angle * 180 / 3.14159265357989323846264338;
+	std::cout << angle << std::endl;
+	return angle;
 }

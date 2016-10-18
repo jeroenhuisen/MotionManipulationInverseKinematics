@@ -13,4 +13,6 @@ public:
 	MiddleFingerRotation();
 	mat rotate(float thetaM, float thetaP, float thetaD); 
 	mat rotate(float thetaM, float thetaP);
+	std::pair<float, float> rotateCoordinates(float thetaM, float thetaP);
+	float rotateCoordinatesAndAngle(float thetaM, float thetaP);
 };
