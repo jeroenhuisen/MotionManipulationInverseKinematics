@@ -3,6 +3,9 @@
 GUIForward::GUIForward() :
 	box(Gtk::ORIENTATION_VERTICAL),
 	calculateButton("Calculate"),
+	labelThetaM(),
+	labelThetaP(),
+	labelThetaD(),
 	entryThetaM(),
 	entryThetaP(),
 	entryThetaD(),
@@ -21,9 +24,20 @@ GUIForward::GUIForward() :
 	entryThetaM.set_max_length(128);
 	entryThetaP.set_max_length(128);
 	entryThetaD.set_max_length(128);
+
+	labelThetaM.set_text("Theta M");
+	labelThetaP.set_text("Theta P");
+	labelThetaD.set_text("Theta D");
+
+	box.add(labelThetaM);
 	box.add(entryThetaM);
+
+	box.add(labelThetaP);
 	box.add(entryThetaP);
+
+	box.add(labelThetaD);
 	box.add(entryThetaD);
+
 	box.add(calculateButton);
 
 	textBuffer = Gtk::TextBuffer::create();

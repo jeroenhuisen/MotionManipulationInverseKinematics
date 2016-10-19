@@ -8,15 +8,6 @@
 using namespace std;
 using namespace arma;
 
-void roundMat(mat& a) {
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			a.at(i, j) = round(a.at(i, j) * 100) / 100;
-		}
-	}
-}
-
-
 int on_cmd(const Glib::RefPtr<Gio::ApplicationCommandLine> &, Glib::RefPtr<Gtk::Application> &app)
 {
 	app->activate(); // <----
@@ -28,7 +19,6 @@ int main(int argc, char** argv){
 	app->signal_command_line().connect(sigc::bind(sigc::ptr_fun(on_cmd), app), false);
 
 	GUIForward window;
-	//window.showMatrix(a);
 
 	return app->run(window);
 }

@@ -17,6 +17,10 @@ protected:
 
 	Gtk::Box box;
 
+	Gtk::Label labelThetaM;
+	Gtk::Label labelThetaP;
+	Gtk::Label labelThetaD;
+
 	Gtk::Entry entryThetaM;
 	Gtk::Entry entryThetaP;
 	Gtk::Entry entryThetaD;
