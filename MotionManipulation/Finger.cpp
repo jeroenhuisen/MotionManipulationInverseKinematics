@@ -86,3 +86,70 @@ float Finger::rotateLastAngle(float thetaM, float thetaP) {
 	std::cout << angle << std::endl;
 	return angle;
 }*/
+
+std::pair<float, float> Finger::inverseRotate(float x, float y) {
+	std::pair<float, float> initialGuess = calculateInitialGuess(x, y);
+	return calculateInverseRotation(x, y, initialGuess.first, initialGuess.second);
+}
+
+std::pair<float, float> Finger::calculateInverseRotation(float x, float y, float thetaM, float thetaP) {
+	mat q = mat(2, 1);
+	q.at(0, 0) = thetaM;
+	q.at(1, 0) = thetaP;
+
+	mat goalCoordinates = mat(2, 1);
+	goalCoordinates.at(0, 0) = x;
+	goalCoordinates.at(1, 0) = y;
+
+	mat resultCoordinates = mat(2, 1);
+	std::pair<float, float> result = rotateCoordinates(thetaM, thetaP);
+	resultCoordinates.at(0, 0) = result.first;
+	resultCoordinates.at(1, 0) = result.second;
+
+	mat newQ = q + inverseJacobian(thetaM, thetaP) * (goalCoordinates - resultCoordinates);
+
+	float newThetaM = newQ.at(0, 0);
+	float newThetaP = newQ.at(1, 0);
+
+	std::pair<float, float> newCoordinates = rotateCoordinates(newThetaM, newThetaP);
+	if (newCoordinates.first  >= x - errorValue &&
+		newCoordinates.first  <= x + errorValue &&
+		newCoordinates.second >= y - errorValue &&
+	    newCoordinates.second <= y + errorValue ){
+		return std::make_pair(newThetaM, newThetaP);
+	}
+	else {
+		return calculateInverseRotation(x, y, newThetaM, newThetaP);
+	}
+}
+
+std::pair<float, float> Finger::calculateInitialGuess(float x, float y) {
+	return std::make_pair(0.0f, -PI / 3); //the middle of the possible angles
+}
+
+mat Finger::jacobian(float thetaM, float thetaP) {
+	mat jacobian = mat(2, 2);
+	jacobian.at(0, 0) = -ppLength * sin(thetaM) - ipLength * sin(thetaM + thetaP) - dpLength * sin(thetaM + 5 * thetaP / 3);
+	jacobian.at(0, 1) = -ipLength * sin(thetaM + thetaP) - dpLength * 5/3 *sin(thetaM + 5 * thetaP / 3);
+	jacobian.at(1, 0) = ppLength * cos(thetaM) + ipLength * cos(thetaM + thetaP) + dpLength * cos(thetaM + 5 * thetaP / 3);
+	jacobian.at(1, 1) = ipLength * cos(thetaM + thetaP) + dpLength * 5/3 *cos(thetaM + 5 * thetaP / 3);
+	return jacobian;
+}
+
+mat Finger::inverseJacobian(float thetaM, float thetaP) {
+	mat inverseJacobian = mat(2, 2);
+	/*float determinant = 1 / (ppLength * ipLength * sin(thetaP) + 1 / 3 * dpLength*(5 * ppLength*sin(5 * thetaP / 3) + 2 * ipLength*sin(2 * thetaP / 3)));
+
+	inverseJacobian.at(0, 0) = (ipLength * cos(thetaM + thetaP) + dpLength * 5 / 3 * cos(thetaM + 5 * thetaP / 3)) *determinant;
+	inverseJacobian.at(0, 1) = (-ipLength * sin(thetaM + thetaP) - dpLength * 5 / 3 * sin(thetaM + 5 * thetaP / 3)) * determinant * -1;
+	inverseJacobian.at(1, 0) = (ppLength * cos(thetaM) + ipLength * cos(thetaM + thetaP) + dpLength * cos(thetaM + 5 * thetaP / 3)) *determinant * -1;
+	inverseJacobian.at(1, 1) = (-ppLength * sin(thetaM) - ipLength * sin(thetaM + thetaP) - dpLength * sin(thetaM + 5 * thetaP / 3)) * determinant;*/
+
+	float divide = 3 * ppLength * ipLength * sin(thetaP) + dpLength *(5.0f * ppLength*sin(5.0f * thetaP / 3.0f) + 2.0f * ipLength*sin(2.0f * thetaP / 3.0f));
+	inverseJacobian.at(0, 0) = (3.0f * ipLength*cos(thetaM + thetaP) + 5 * dpLength * cos((3.0f * thetaM + 5.0f * thetaP) / 3.0f)) / divide;
+	inverseJacobian.at(0, 1) = (-3.0f * ipLength*sin(thetaM + thetaP) - 5 * dpLength*sin((3.0f * thetaM + 5.0f * thetaP) / 3.0f)) / divide * -1.0f;
+	inverseJacobian.at(1, 0) = (3.0f * (ipLength * cos(thetaM + thetaP) + dpLength * cos((3.0f * thetaM + 5.0f * thetaP) / 3.0f) + ppLength * cos(thetaM))) / divide * -1.0f;
+	inverseJacobian.at(1, 1) = (3.0f * (-1.0f*ipLength * sin(thetaM + thetaP) - dpLength * sin((3.0f * thetaM + 5.0f * thetaP) / 3.0f) - ppLength * sin(thetaM))) / divide;
+
+	return inverseJacobian;
+}

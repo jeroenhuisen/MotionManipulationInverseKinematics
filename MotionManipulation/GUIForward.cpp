@@ -88,6 +88,12 @@ void GUIForward::on_button_clicked() {
 	std::string coordinatesText = std::to_string(coordinates.first) + ", " + std::to_string(coordinates.second);
 	textBuffer->set_text(coordinatesText);
 	returnText.set_buffer(textBuffer);
+
+
+	// test remove this
+	std::pair<float, float> result = mF.inverseRotate(coordinates.first, coordinates.second);
+	std::cout << result.first << std::endl;
+	std::cout << result.second << std::endl;
 }
 
 
@@ -102,5 +108,4 @@ float GUIForward::parseAngle(std::string input) {
 	parser.compile(input, expression);
 
 	return expression.value();
-	return 1.0f;
 }
