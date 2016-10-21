@@ -76,6 +76,15 @@ std::pair<float, float> Finger::rotateCoordinates(float thetaM, float thetaP) {
 	return std::make_pair(result.at(0, 3), result.at(1, 3));
 }
 
+std::pair<float, float> Finger::rotateCoordinates(mat matrix) {
+	float thetaM = matrix.at(0, 0);
+	float thetaP = matrix.at(1, 0);
+
+	float x = ppLength*cos(thetaM) + ipLength * cos(thetaM + thetaP) + dpLength * cos(thetaM + 5 * thetaP / 3);
+	float y = ppLength*sin(thetaM) + ipLength * sin(thetaM + thetaP) + dpLength * sin(thetaM + 5 * thetaP / 3);
+
+	return std::make_pair(x, y);
+}
 /*
 float Finger::rotateLastAngle(float thetaM, float thetaP) {
 	mat result = rotate(thetaM, thetaP);
@@ -89,37 +98,35 @@ float Finger::rotateLastAngle(float thetaM, float thetaP) {
 
 std::pair<float, float> Finger::inverseRotate(float x, float y) {
 	std::pair<float, float> initialGuess = calculateInitialGuess(x, y);
-	return calculateInverseRotation(x, y, initialGuess.first, initialGuess.second);
+	mat q = mat(2, 1);
+	q.at(0, 0) = initialGuess.first;
+	q.at(1, 0) = initialGuess.second;
+
+	mat finalCoordinates = mat(2, 1);
+	finalCoordinates.at(0, 0) = x;
+	finalCoordinates.at(1, 0) = y;
+	return calculateInverseRotation(finalCoordinates, q);
 }
 
-std::pair<float, float> Finger::calculateInverseRotation(float x, float y, float thetaM, float thetaP) {
-	mat q = mat(2, 1);
-	q.at(0, 0) = thetaM;
-	q.at(1, 0) = thetaP;
-
-	mat goalCoordinates = mat(2, 1);
-	goalCoordinates.at(0, 0) = x;
-	goalCoordinates.at(1, 0) = y;
-
+std::pair<float, float> Finger::calculateInverseRotation(mat finalCoordinates, mat q) {
 	mat resultCoordinates = mat(2, 1);
-	std::pair<float, float> result = rotateCoordinates(thetaM, thetaP);
+	std::pair<float, float> result = rotateCoordinates(q);
 	resultCoordinates.at(0, 0) = result.first;
 	resultCoordinates.at(1, 0) = result.second;
 
-	mat newQ = q + inverseJacobian(thetaM, thetaP) * (goalCoordinates - resultCoordinates);
+	mat newQ = q + inverseJacobian(q) * (finalCoordinates - resultCoordinates);
 
-	float newThetaM = newQ.at(0, 0);
-	float newThetaP = newQ.at(1, 0);
-
-	std::pair<float, float> newCoordinates = rotateCoordinates(newThetaM, newThetaP);
-	if (newCoordinates.first  >= x - errorValue &&
-		newCoordinates.first  <= x + errorValue &&
-		newCoordinates.second >= y - errorValue &&
-	    newCoordinates.second <= y + errorValue ){
+	std::pair<float, float> newCoordinates = rotateCoordinates(newQ);
+	if (newCoordinates.first  >= finalCoordinates.at(0, 0) - errorValue &&
+		newCoordinates.first  <= finalCoordinates.at(0, 0) + errorValue &&
+		newCoordinates.second >= finalCoordinates.at(1, 0) - errorValue &&
+	    newCoordinates.second <= finalCoordinates.at(1, 0) + errorValue ){
+		float newThetaM = newQ.at(0, 0);
+		float newThetaP = newQ.at(1, 0);
 		return std::make_pair(newThetaM, newThetaP);
 	}
 	else {
-		return calculateInverseRotation(x, y, newThetaM, newThetaP);
+		return calculateInverseRotation(finalCoordinates, q);
 	}
 }
 
@@ -152,4 +159,8 @@ mat Finger::inverseJacobian(float thetaM, float thetaP) {
 	inverseJacobian.at(1, 1) = (3.0f * (-1.0f*ipLength * sin(thetaM + thetaP) - dpLength * sin((3.0f * thetaM + 5.0f * thetaP) / 3.0f) - ppLength * sin(thetaM))) / divide;
 
 	return inverseJacobian;
+}
+
+mat Finger::inverseJacobian(mat q) {
+	return inverseJacobian(q.at(0, 0), q.at(1, 0));
 }

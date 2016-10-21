@@ -16,8 +16,12 @@ private:
 	float errorValue = 0.1;
 
 	std::pair<float, float> calculateInitialGuess(float x, float y);
-	std::pair<float, float> calculateInverseRotation(float x, float y, float thetaM, float thetaP);
+	//std::pair<float, float> calculateInverseRotation(float x, float y, float thetaM, float thetaP);
+	std::pair<float, float> calculateInverseRotation(mat finalCoordinates, mat q);
 
+	mat jacobian(float thetaM, float thetaP);
+	mat inverseJacobian(float thetaM, float thetaP);
+	mat inverseJacobian(mat q);
 
 public:
 	Finger(float ppLength, float ipLength, float dpLength);
@@ -26,10 +30,8 @@ public:
 	std::pair<float, float> rotateCoordinates(float thetaM, float thetaP, float thetaD);
 	std::pair<float, float> rotateCoordinates(float thetaM, float thetaP);
 
+	std::pair<float, float> rotateCoordinates(mat matrix);
+
 	std::pair<float, float> inverseRotate(float x, float y);
 
-
-	// make private
-	mat jacobian(float thetaM, float thetaP);
-	mat inverseJacobian(float thetaM, float thetaP);
 };
