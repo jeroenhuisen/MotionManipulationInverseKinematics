@@ -27,9 +27,13 @@ protected:
 
 	Gtk::Button calculateButton;
 
-	Gtk::TextView returnText;
-	Glib::RefPtr<Gtk::TextBuffer> textBuffer;
+	Gtk::Label labelCoordinates;
+	Gtk::TextView coordinatesOutput;
+	Glib::RefPtr<Gtk::TextBuffer> coordinatesOutputBuffer;
 
+	Gtk::Label labelAngle;
+	Gtk::TextView angleOutput;
+	Glib::RefPtr<Gtk::TextBuffer> angleOutputBuffer;
 	
 	MiddleFinger mF;
 

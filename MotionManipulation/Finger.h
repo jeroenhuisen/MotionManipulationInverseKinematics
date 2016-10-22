@@ -13,7 +13,7 @@ private:
 	mat rotation1, rotation2, rotation3;
 	mat translation1, translation2, translation3;
 
-	float errorValue = 0.1;
+	float errorValue = 0.001;
 
 	std::pair<float, float> calculateInitialGuess(float x, float y);
 	//std::pair<float, float> calculateInverseRotation(float x, float y, float thetaM, float thetaP);
@@ -30,8 +30,11 @@ public:
 	mat rotate(float thetaM, float thetaP);
 	std::pair<float, float> rotateCoordinates(float thetaM, float thetaP, float thetaD);
 	std::pair<float, float> rotateCoordinates(float thetaM, float thetaP);
-
 	std::pair<float, float> rotateCoordinates(mat matrix);
+
+	float tipAngle(float thetaM, float thetaP, float thetaD);
+	float tipAngle(float thetaM, float thetaP);
+	float tipAngle(mat matrix);
 
 	std::pair<float, float> inverseRotate(float x, float y);
 

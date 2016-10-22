@@ -3,13 +3,16 @@
 GUIForward::GUIForward() :
 	box(Gtk::ORIENTATION_VERTICAL),
 	calculateButton("Calculate"),
-	labelThetaM(),
-	labelThetaP(),
-	labelThetaD(),
+	labelThetaM("Theta M"),
+	labelThetaP("Theta P"),
+	labelThetaD("Theta D"),
 	entryThetaM(),
 	entryThetaP(),
 	entryThetaD(),
-	returnText()
+	labelCoordinates("Coordinates of the tip"),
+	coordinatesOutput(),
+	labelAngle("Angle of the tip"),
+	angleOutput()
 {
 	// Sets titel of the window
 	set_title("GUI Forward kinematics");
@@ -25,10 +28,6 @@ GUIForward::GUIForward() :
 	entryThetaP.set_max_length(128);
 	entryThetaD.set_max_length(128);
 
-	labelThetaM.set_text("Theta M");
-	labelThetaP.set_text("Theta P");
-	labelThetaD.set_text("Theta D");
-
 	box.add(labelThetaM);
 	box.add(entryThetaM);
 
@@ -40,13 +39,22 @@ GUIForward::GUIForward() :
 
 	box.add(calculateButton);
 
-	textBuffer = Gtk::TextBuffer::create();
+	coordinatesOutputBuffer = Gtk::TextBuffer::create();
 	// Only the first two angles are required
-	textBuffer->set_text("Please enter the angles");
+	coordinatesOutputBuffer->set_text("Please enter the angles");
 
-	returnText.set_buffer(textBuffer);
-	box.add(returnText);
+	coordinatesOutput.set_buffer(coordinatesOutputBuffer);
+	box.add(labelCoordinates);
+	box.add(coordinatesOutput);
 
+
+	angleOutputBuffer = Gtk::TextBuffer::create();
+	// Only the first two angles are required
+	angleOutputBuffer->set_text("Press calculate");
+
+	angleOutput.set_buffer(angleOutputBuffer);
+	box.add(labelAngle);
+	box.add(angleOutput);
 
 
 	// The final step is to display this newly created widget...
@@ -71,41 +79,49 @@ void GUIForward::on_button_clicked() {
 	std::cout << "input: " << textThetaM << ", parsed: " << thetaM << std::endl;
 	std::cout << "input: " << textThetaP << ", parsed: " << thetaP << std::endl;
 
-	if (thetaM > PI / 2 || thetaM < -PI / 2) {
-		std::cerr << "thetaM is not in the domain [-pi/2, pi/2] but has value: " << thetaM << std::endl;
-		textBuffer->set_text("thetaM is not in the domain [-pi/2, pi/2]");
+	if (thetaM > PI / 3 || thetaM < -PI / 3) {
+		std::cerr << "thetaM is not in the domain [-pi/3, pi/3] but has value: " << thetaM << std::endl;
+		coordinatesOutputBuffer->set_text("thetaM is not in the domain [-pi/3, pi/3]");
 		return;
 	}
 
-	if (thetaP > 0|| thetaP < -PI / 2) {
-		std::cerr << "thetaP is not in the domain [-pi/2, 0] but has value: " << thetaP << std::endl;
-		textBuffer->set_text("thetaP is not in the domain [-pi/2, 0]");
+	if (thetaP > 0|| thetaP < -2*PI / 3) {
+		std::cerr << "thetaP is not in the domain [-2pi/3, 0] but has value: " << thetaP << std::endl;
+		coordinatesOutputBuffer->set_text("thetaP is not in the domain [-2pi/3, 0]");
 		return;
 	}
-	
-	//mat result;
+
 	std::pair<float, float> coordinates;
+	float angle;
 	
 	if (thetaDEntered){
 		float thetaD = parseAngle(textThetaD);
 		std::cout << "input: " << textThetaD << ", parsed: " << thetaD << std::endl;
-		coordinates = mF.rotateCoordinates(thetaM, thetaP, thetaD);
-		
+
+		if (thetaD > 0 || thetaD < -2 * PI / 3) {
+			std::cerr << "thetaD is not in the domain [-2pi/3, 0] but has value: " << thetaD << std::endl;
+			coordinatesOutputBuffer->set_text("thetaD is not in the domain [-2pi/3, 0]");
+			return;
+		}
+
+		coordinates = mF.rotateCoordinates(thetaM, thetaP, thetaD);	
+		angle = mF.tipAngle(thetaM, thetaP, thetaD);
 	}
+
 	else {
 		std::cout << "input: No input for thetaD using the restriction" << std::endl;
-		//result = mfr.rotate(thetaM, thetaP);
 		coordinates = mF.rotateCoordinates(thetaM, thetaP);
+		angle = mF.tipAngle(thetaM, thetaP);
 	}
 	std::string coordinatesText = std::to_string(coordinates.first) + ", " + std::to_string(coordinates.second);
-	textBuffer->set_text(coordinatesText);
-	returnText.set_buffer(textBuffer);
+	coordinatesOutputBuffer->set_text(coordinatesText);
+	angleOutputBuffer->set_text(std::to_string(angle));
 
 
 	// test remove this
 	std::pair<float, float> result = mF.inverseRotate(coordinates.first, coordinates.second);
-	std::cout << result.first << std::endl;
-	std::cout << result.second << std::endl;
+	std::cout << "ThetaM: " << result.first << std::endl;
+	std::cout << "ThetaP: " << result.second << std::endl;
 }
 
 

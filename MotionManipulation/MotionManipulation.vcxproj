@@ -100,7 +100,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\libs\exprtk;..\libs\armadillo-7.400.4\include;..\libs\VisualStudioGTKMM\include\glibmm;..\libs\VisualStudioGTKMM\include\gtkmm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libs\SFML-2.4.0\include;..\libs\exprtk;..\libs\armadillo-7.400.4\include;..\libs\VisualStudioGTKMM\include\glibmm;..\libs\VisualStudioGTKMM\include\gtkmm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_CONSOLE;_DEBUG;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;_HAS_ITERATOR_DEBUGGING=1;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -108,7 +108,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>lapack_win64_MT.lib;blas_win64_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libs\VisualStudioGTKMM\lib;..\libs\armadillo-7.400.4\examples\lib_win64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libs\SFML-2.4.0\lib;..\libs\VisualStudioGTKMM\lib;..\libs\armadillo-7.400.4\examples\lib_win64</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>

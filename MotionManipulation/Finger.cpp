@@ -85,6 +85,23 @@ std::pair<float, float> Finger::rotateCoordinates(mat matrix) {
 
 	return std::make_pair(x, y);
 }
+
+float Finger::tipAngle(mat matrix) {
+	float thetaM = matrix.at(0, 0);
+	float thetaP = matrix.at(1, 0);
+
+	return acosf(thetaM + 5*thetaP/3);
+}
+
+float Finger::tipAngle(float thetaM, float thetaP) {
+	return tipAngle(thetaM, thetaP, 2 * thetaP / 3);
+	//return acosf(thetaM + 5 * thetaP / 3);
+
+}
+
+float Finger::tipAngle(float thetaM, float thetaP, float thetaD) {
+	return thetaM + thetaP + thetaD;
+}
 /*
 float Finger::rotateLastAngle(float thetaM, float thetaP) {
 	mat result = rotate(thetaM, thetaP);
@@ -158,14 +175,32 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 		std::cout << newCoordinates.first << ", " << newCoordinates.second << std::endl;
 		std::cout << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
 	}
+	float thetaM = newQ.at(0, 0);
+	float thetaP = newQ.at(1, 0);
 	std::cout << "rotations: " << i << std::endl;
+	std::cout << "ThetaM: " << thetaM << std::endl;
+	std::cout << "ThetaP: " << thetaP << std::endl;
+
+	thetaM = fmod(thetaM, 2*PI);
+	thetaP = fmod(thetaP, 2*PI);
+
+	if (thetaM < -PI) {
+		thetaM = 2 * PI + thetaM;
+	}
+	if (thetaP < -PI) {
+		thetaP = 2 * PI + thetaP;
+	}
+	std::cout << "ThetaMOptimized: " << thetaM << std::endl;
+	std::cout << "ThetaPOptimized: " << thetaP << std::endl;
+
+
 	return std::make_pair(newQ.at(0, 0), newQ.at(1, 0));
 }
 
 
 
 std::pair<float, float> Finger::calculateInitialGuess(float x, float y) {
-	return std::make_pair(0.0f, -PI / 3); //the middle of the possible angles
+	return std::make_pair(0.0f, -PI/3); //the middle of the possible angles
 }
 
 mat Finger::jacobian(float thetaM, float thetaP) {
