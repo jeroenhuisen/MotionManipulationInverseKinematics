@@ -107,7 +107,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>lapack_win64_MT.lib;blas_win64_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lapack_win64_MT.lib;blas_win64_MT.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\libs\SFML-2.4.0\lib;..\libs\VisualStudioGTKMM\lib;..\libs\armadillo-7.400.4\examples\lib_win64</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
