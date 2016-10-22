@@ -18,6 +18,7 @@ private:
 	std::pair<float, float> calculateInitialGuess(float x, float y);
 	//std::pair<float, float> calculateInverseRotation(float x, float y, float thetaM, float thetaP);
 	std::pair<float, float> calculateInverseRotation(mat finalCoordinates, mat q);
+	std::pair<float, float> calculateInverseRotationNonRecursive(mat finalCoordinates, mat q);
 
 	mat jacobian(float thetaM, float thetaP);
 	mat inverseJacobian(float thetaM, float thetaP);

@@ -105,9 +105,10 @@ std::pair<float, float> Finger::inverseRotate(float x, float y) {
 	mat finalCoordinates = mat(2, 1);
 	finalCoordinates.at(0, 0) = x;
 	finalCoordinates.at(1, 0) = y;
-	return calculateInverseRotation(finalCoordinates, q);
+	return calculateInverseRotationNonRecursive(finalCoordinates, q);
 }
 
+// recursive
 std::pair<float, float> Finger::calculateInverseRotation(mat finalCoordinates, mat q) {
 	mat resultCoordinates = mat(2, 1);
 	std::pair<float, float> result = rotateCoordinates(q);
@@ -116,19 +117,52 @@ std::pair<float, float> Finger::calculateInverseRotation(mat finalCoordinates, m
 
 	mat newQ = q + inverseJacobian(q) * (finalCoordinates - resultCoordinates);
 
-	std::pair<float, float> newCoordinates = rotateCoordinates(newQ);
-	if (newCoordinates.first  >= finalCoordinates.at(0, 0) - errorValue &&
-		newCoordinates.first  <= finalCoordinates.at(0, 0) + errorValue &&
-		newCoordinates.second >= finalCoordinates.at(1, 0) - errorValue &&
-	    newCoordinates.second <= finalCoordinates.at(1, 0) + errorValue ){
+	std::pair<float, float> newCoordinates = rotateCoordinates(newQ.at(0,0), newQ.at(1,0));
+	std::cout << newCoordinates.first << ", " << newCoordinates.second << std::endl;
+	std::cout << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
+	if (newCoordinates.first  >= (finalCoordinates.at(0, 0) - errorValue) &&
+		newCoordinates.first  <= (finalCoordinates.at(0, 0) + errorValue) &&
+		newCoordinates.second >= (finalCoordinates.at(1, 0) - errorValue) &&
+	    newCoordinates.second <= (finalCoordinates.at(1, 0) + errorValue) ){
 		float newThetaM = newQ.at(0, 0);
 		float newThetaP = newQ.at(1, 0);
 		return std::make_pair(newThetaM, newThetaP);
 	}
 	else {
-		return calculateInverseRotation(finalCoordinates, q);
+		return calculateInverseRotation(finalCoordinates, newQ);
 	}
 }
+
+bool checkErrorValue(std::pair<float, float> newCoordinates, mat finalCoordinates, float errorValue) {
+	return newCoordinates.first >= (finalCoordinates.at(0, 0) - errorValue) &&
+		newCoordinates.first <= (finalCoordinates.at(0, 0) + errorValue) &&
+		newCoordinates.second >= (finalCoordinates.at(1, 0) - errorValue) &&
+		newCoordinates.second <= (finalCoordinates.at(1, 0) + errorValue);
+}
+
+// non recursive
+std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCoordinates, mat q) {
+	mat resultCoordinates = mat(2, 1);
+	std::pair<float, float> newCoordinates;
+	mat newQ = q;
+	int i;
+	for (i=0;  !checkErrorValue(newCoordinates, finalCoordinates, errorValue); i++) {
+		std::pair<float, float> result = rotateCoordinates(newQ);
+		resultCoordinates.at(0, 0) = result.first;
+		resultCoordinates.at(1, 0) = result.second;
+
+		newQ = newQ + inverseJacobian(newQ) * (finalCoordinates - resultCoordinates);
+
+		newCoordinates = rotateCoordinates(newQ.at(0, 0), newQ.at(1, 0));
+
+		std::cout << newCoordinates.first << ", " << newCoordinates.second << std::endl;
+		std::cout << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
+	}
+	std::cout << "rotations: " << i << std::endl;
+	return std::make_pair(newQ.at(0, 0), newQ.at(1, 0));
+}
+
+
 
 std::pair<float, float> Finger::calculateInitialGuess(float x, float y) {
 	return std::make_pair(0.0f, -PI / 3); //the middle of the possible angles

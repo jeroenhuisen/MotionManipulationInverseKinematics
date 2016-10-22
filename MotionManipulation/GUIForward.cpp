@@ -70,6 +70,18 @@ void GUIForward::on_button_clicked() {
 	
 	std::cout << "input: " << textThetaM << ", parsed: " << thetaM << std::endl;
 	std::cout << "input: " << textThetaP << ", parsed: " << thetaP << std::endl;
+
+	if (thetaM > PI / 2 || thetaM < -PI / 2) {
+		std::cerr << "thetaM is not in the domain [-pi/2, pi/2] but has value: " << thetaM << std::endl;
+		textBuffer->set_text("thetaM is not in the domain [-pi/2, pi/2]");
+		return;
+	}
+
+	if (thetaP > 0|| thetaP < -PI / 2) {
+		std::cerr << "thetaP is not in the domain [-pi/2, 0] but has value: " << thetaP << std::endl;
+		textBuffer->set_text("thetaP is not in the domain [-pi/2, 0]");
+		return;
+	}
 	
 	//mat result;
 	std::pair<float, float> coordinates;
