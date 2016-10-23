@@ -174,12 +174,16 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 
 		//std::cout << newCoordinates.first << ", " << newCoordinates.second << std::endl;
 		//std::cout << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
+		if (i >= MAX_ITERATIONS) {
+			std::cerr << "Maximum iterations(" << MAX_ITERATIONS << ") reached coordinates couldn't be reached" << std::endl;
+			return std::make_pair(NAN, NAN);
+		}
 	}
 	float thetaM = newQ.at(0, 0);
 	float thetaP = newQ.at(1, 0);
-	//std::cout << "rotations: " << i << std::endl;
-	//std::cout << "ThetaM: " << thetaM << std::endl;
-	//std::cout << "ThetaP: " << thetaP << std::endl;
+	std::cout << "rotations: " << i << std::endl;
+	std::cout << "ThetaM: " << thetaM << std::endl;
+	std::cout << "ThetaP: " << thetaP << std::endl;
 
 	thetaM = fmod(thetaM, 2*PI);
 	thetaP = fmod(thetaP, 2*PI);
@@ -190,9 +194,22 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 	if (thetaP < -PI) {
 		thetaP = 2 * PI + thetaP;
 	}
-	//std::cout << "ThetaMOptimized: " << thetaM << std::endl;
-	//std::cout << "ThetaPOptimized: " << thetaP << std::endl;
+	if (thetaM >= PI) {
+		thetaM -= PI;
+	}
+	if (thetaP >= PI) {
+		thetaP -= PI;
+	}
 
+	std::cout << "ThetaMOptimized: " << thetaM << std::endl;
+	std::cout << "ThetaPOptimized: " << thetaP << std::endl;
+
+	if (!(thetaM >= -PI / 3 - FLOAT_ERROR&& thetaM <= PI / 3 + FLOAT_ERROR)) {
+		std::cerr << "ThetaM: " << thetaM << " is outside of the allowed domain" <<std::endl;
+	}
+	if (!(thetaP >= -2*PI / 3 - FLOAT_ERROR && thetaP <= 0 + FLOAT_ERROR)) {
+		std::cerr << "ThetaP: " << thetaP << " is outside of the allowed domain" << std::endl;
+	}
 
 	return std::make_pair(newQ.at(0, 0), newQ.at(1, 0));
 }

@@ -92,17 +92,26 @@ GUIInverse::GUIInverse() :
 
 
 float linear(float startX, float endX, float startY, float endY, float interval, float currentX) {
-	float amount = (endX - startX) / interval; //amount of steps
+	/*float length = sqrt(pow((endX - startX), 2) + pow((endY - startY), 2));
+	float amount =  length/ interval; //amount of steps
 	float current = (currentX - startX) / interval; //the current step number
-	if (startY > 0) {
-		return startY + (endY - startY) / amount * current;
+
+	return startY + (endY - startY) / amount * current;*/
+	
+	
+	float slope = (endY - startY) / (endX - startX);
+	/*if (endY < startY) {
+		float temp = startY;
+		startY = endY;
+		endY = temp;
 	}
-	else {
-		if (amount < 0) {
-			return startY + (endY - startY) / amount * current;
-		}
-		return startY + (endY - startY) / amount * current;
-	}
+	if (endX < startX) {
+		float temp = startX;
+		startX = endX;
+		endX = temp;
+	}*/
+
+	return slope * (currentX - startX) + startY;
 }
 
 void GUIInverse::on_button_clicked() {
@@ -178,8 +187,39 @@ void GUIInverse::on_button_clicked() {
 	std::cout << "input: " << textEndCoordinateY << ", parsed: " << endCoordinateY << std::endl;
 	std::cout << "input: " << textInterval       << ", parsed: " << interval       << std::endl;
 
-	for (float x = coordinateX; x <= endCoordinateX; x += interval) {
-		float y = linear(coordinateX, endCoordinateX, coordinateY, endCoordinateY, interval, x);
+	if (endCoordinateY < coordinateY) {
+		float temp = coordinateY;
+		coordinateY = endCoordinateY;
+		endCoordinateY = temp;
+	}
+
+	if (endCoordinateX < coordinateX) {
+		float temp = coordinateX;
+		coordinateX = endCoordinateX;
+		endCoordinateX = temp;
+	}
+
+	float length = sqrt(pow((endCoordinateX - coordinateX), 2) + pow((endCoordinateY - coordinateY), 2));
+	float amount = length / interval; //amount of steps
+
+	float initX, initY;
+	float endX, endY;
+
+	if (coordinateX == endCoordinateX) {
+		initX = coordinateY;
+		endX = endCoordinateY;
+		initY = coordinateX;
+		endY = endCoordinateX;
+	}
+	else {
+		initX = coordinateX;
+		endX = endCoordinateX;
+		initY = coordinateY;
+		endY = endCoordinateY;
+	}
+	//fix tomorrow
+	for (float x = initX; x <= endX; x += (endX-initX)/amount) {
+		float y = linear(initX, endX, initY, endX, interval, x);
 
 		if (!isReachable(x, y)) {
 			std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
@@ -187,7 +227,12 @@ void GUIInverse::on_button_clicked() {
 		}
 		else {
 			std::pair<float, float> result = mF.inverseRotate(x, y);
-			std::cout << "x: " << x << ", y: " << y << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
+			if (result.first == NAN) {
+				std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
+			}
+			else {
+				std::cout << "x: " << x << ", y: " << y << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
+			}
 		}
 	}
 }
@@ -210,5 +255,10 @@ float GUIInverse::parseCoordinate(std::string input) {
 
 bool GUIInverse::isReachable(float coordinateX, float coordinateY) {
 	// should be improved
-	return true;
+	if (coordinateX >= -21.41 && coordinateX <= 88.31 && coordinateY >= -82.33 && coordinateY <= 76.48) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }

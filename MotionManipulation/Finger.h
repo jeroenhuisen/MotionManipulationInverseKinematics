@@ -6,6 +6,8 @@
 using namespace arma;
 
 #define PI 3.14159285358979323846264338327950
+#define MAX_ITERATIONS 500
+#define FLOAT_ERROR 0.01
 
 class Finger {
 private:
