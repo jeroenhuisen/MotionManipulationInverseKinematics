@@ -205,11 +205,14 @@ void GUIInverse::on_button_clicked() {
 	float initX, initY;
 	float endX, endY;
 
+	bool swapX = false;
+
 	if (coordinateX == endCoordinateX) {
 		initX = coordinateY;
 		endX = endCoordinateY;
 		initY = coordinateX;
 		endY = endCoordinateX;
+		swapX = true;
 	}
 	else {
 		initX = coordinateX;
@@ -217,22 +220,35 @@ void GUIInverse::on_button_clicked() {
 		initY = coordinateY;
 		endY = endCoordinateY;
 	}
-	//fix tomorrow
+
 	for (float x = initX; x <= endX; x += (endX-initX)/amount) {
-		float y = linear(initX, endX, initY, endX, interval, x);
+		float y = linear(initX, endX, initY, endY, interval, x);
+
+
+		if (swapX) {
+			float temp = x;
+			x = y;
+			y = temp;
+		}
 
 		if (!isReachable(x, y)) {
-			std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
+			std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl; 
 			break;
 		}
 		else {
 			std::pair<float, float> result = mF.inverseRotate(x, y);
-			if (result.first == NAN) {
+			if (result.first == NAN) { 
 				std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
 			}
 			else {
 				std::cout << "x: " << x << ", y: " << y << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
 			}
+		}
+
+		if (swapX) {
+			float temp = x;
+			x = y;
+			y = temp;
 		}
 	}
 }
