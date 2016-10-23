@@ -177,9 +177,9 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 	}
 	float thetaM = newQ.at(0, 0);
 	float thetaP = newQ.at(1, 0);
-	std::cout << "rotations: " << i << std::endl;
-	std::cout << "ThetaM: " << thetaM << std::endl;
-	std::cout << "ThetaP: " << thetaP << std::endl;
+	//std::cout << "rotations: " << i << std::endl;
+	//std::cout << "ThetaM: " << thetaM << std::endl;
+	//std::cout << "ThetaP: " << thetaP << std::endl;
 
 	thetaM = fmod(thetaM, 2*PI);
 	thetaP = fmod(thetaP, 2*PI);
@@ -190,8 +190,8 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 	if (thetaP < -PI) {
 		thetaP = 2 * PI + thetaP;
 	}
-	std::cout << "ThetaMOptimized: " << thetaM << std::endl;
-	std::cout << "ThetaPOptimized: " << thetaP << std::endl;
+	//std::cout << "ThetaMOptimized: " << thetaM << std::endl;
+	//std::cout << "ThetaPOptimized: " << thetaP << std::endl;
 
 
 	return std::make_pair(newQ.at(0, 0), newQ.at(1, 0));

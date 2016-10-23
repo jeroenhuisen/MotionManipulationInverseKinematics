@@ -92,8 +92,17 @@ GUIInverse::GUIInverse() :
 
 
 float linear(float startX, float endX, float startY, float endY, float interval, float currentX) {
-	float amount = (currentX - startX) / interval;
-	return (endY - startY) / interval * amount;
+	float amount = (endX - startX) / interval; //amount of steps
+	float current = (currentX - startX) / interval; //the current step number
+	if (startY > 0) {
+		return startY + (endY - startY) / amount * current;
+	}
+	else {
+		if (amount < 0) {
+			return startY + (endY - startY) / amount * current;
+		}
+		return startY + (endY - startY) / amount * current;
+	}
 }
 
 void GUIInverse::on_button_clicked() {
@@ -171,8 +180,15 @@ void GUIInverse::on_button_clicked() {
 
 	for (float x = coordinateX; x <= endCoordinateX; x += interval) {
 		float y = linear(coordinateX, endCoordinateX, coordinateY, endCoordinateY, interval, x);
-		std::pair<float, float> result = mF.inverseRotate(x, y);
-		std::cout << result.first << " and thetaP: " << result.second << std::endl;
+
+		if (!isReachable(x, y)) {
+			std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
+			break;
+		}
+		else {
+			std::pair<float, float> result = mF.inverseRotate(x, y);
+			std::cout << "x: " << x << ", y: " << y << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
+		}
 	}
 }
 
