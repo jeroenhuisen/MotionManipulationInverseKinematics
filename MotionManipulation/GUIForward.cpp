@@ -75,19 +75,29 @@ void GUIForward::on_button_clicked() {
 
 	float thetaM = parseAngle(textThetaM);
 	float thetaP = parseAngle(textThetaP);
+
+	if (isnan(thetaM)) {
+		std::cerr << "Invalid input for thetaM" << std::endl;
+		coordinatesOutputBuffer->set_text("Invalid input for thetaM");
+		return;
+	}
+	if (isnan(thetaP)) {
+		std::cerr << "Invalid input for thetaP" << std::endl;
+		coordinatesOutputBuffer->set_text("Invalid input for thetaP");
+	}
 	
 	std::cout << "input: " << textThetaM << ", parsed: " << thetaM << std::endl;
 	std::cout << "input: " << textThetaP << ", parsed: " << thetaP << std::endl;
 
 	if (thetaM > PI / 3 || thetaM < -PI / 3) {
-		std::cerr << "thetaM is not in the domain [-pi/3, pi/3] but has value: " << thetaM << std::endl;
-		coordinatesOutputBuffer->set_text("thetaM is not in the domain [-pi/3, pi/3]");
+		std::cerr << "ThetaM is not in the domain [-pi/3, pi/3] but has value: " << thetaM << std::endl;
+		coordinatesOutputBuffer->set_text("ThetaM is not in the domain [-pi/3, pi/3]");
 		return;
 	}
 
 	if (thetaP > 0|| thetaP < -2*PI / 3) {
-		std::cerr << "thetaP is not in the domain [-2pi/3, 0] but has value: " << thetaP << std::endl;
-		coordinatesOutputBuffer->set_text("thetaP is not in the domain [-2pi/3, 0]");
+		std::cerr << "ThetaP is not in the domain [-2pi/3, 0] but has value: " << thetaP << std::endl;
+		coordinatesOutputBuffer->set_text("ThetaP is not in the domain [-2pi/3, 0]");
 		return;
 	}
 
@@ -99,8 +109,8 @@ void GUIForward::on_button_clicked() {
 		std::cout << "input: " << textThetaD << ", parsed: " << thetaD << std::endl;
 
 		if (thetaD > 0 || thetaD < -2 * PI / 3) {
-			std::cerr << "thetaD is not in the domain [-2pi/3, 0] but has value: " << thetaD << std::endl;
-			coordinatesOutputBuffer->set_text("thetaD is not in the domain [-2pi/3, 0]");
+			std::cerr << "ThetaD is not in the domain [-2pi/3, 0] but has value: " << thetaD << std::endl;
+			coordinatesOutputBuffer->set_text("ThetaD is not in the domain [-2pi/3, 0]");
 			return;
 		}
 

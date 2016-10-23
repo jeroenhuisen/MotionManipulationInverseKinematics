@@ -21,11 +21,13 @@
   <ItemGroup>
     <ClCompile Include="Finger.cpp" />
     <ClCompile Include="GUIForward.cpp" />
+    <ClCompile Include="GUIInverse.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Finger.h" />
     <ClInclude Include="GUIForward.h" />
+    <ClInclude Include="GUIInverse.h" />
     <ClInclude Include="MiddleFinger.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

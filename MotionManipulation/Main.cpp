@@ -3,6 +3,7 @@
 #include <gtkmm.h>
 
 #include "GUIForward.h"
+#include "GUIInverse.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -20,9 +21,9 @@ int main(int argc, char** argv){
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "com.kinematics.ForwardGUI", Gio::APPLICATION_HANDLES_COMMAND_LINE);
 	app->signal_command_line().connect(sigc::bind(sigc::ptr_fun(on_cmd), app), false);
 
-	GUIForward window;
-
-	return app->run(window);
+	GUIForward forwardWindow;
+	GUIInverse inverseWindow;
+	return app->run(inverseWindow);
 }
 
  
