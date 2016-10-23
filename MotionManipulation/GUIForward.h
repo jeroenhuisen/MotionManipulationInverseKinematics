@@ -15,7 +15,7 @@ protected:
 	//Signal handlers:
 	void on_button_clicked();
 
-	Gtk::Box box;
+	Gtk::Box inputBox;
 
 	Gtk::Label labelThetaM;
 	Gtk::Label labelThetaP;

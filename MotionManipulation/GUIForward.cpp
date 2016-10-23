@@ -1,7 +1,7 @@
 #include "GUIForward.h"
 
 GUIForward::GUIForward() :
-	box(Gtk::ORIENTATION_VERTICAL),
+	inputBox(Gtk::ORIENTATION_VERTICAL),
 	calculateButton("Calculate"),
 	labelThetaM("Theta M"),
 	labelThetaP("Theta P"),
@@ -21,31 +21,31 @@ GUIForward::GUIForward() :
 
 	//add(sendButton);
 	calculateButton.signal_clicked().connect(sigc::mem_fun(*this, &GUIForward::on_button_clicked));
-	add(box);
+	add(inputBox);
 
 	//put it to 128 for no real reason just to limit it without being annoying
 	entryThetaM.set_max_length(128);
 	entryThetaP.set_max_length(128);
 	entryThetaD.set_max_length(128);
 
-	box.add(labelThetaM);
-	box.add(entryThetaM);
+	inputBox.add(labelThetaM);
+	inputBox.add(entryThetaM);
 
-	box.add(labelThetaP);
-	box.add(entryThetaP);
+	inputBox.add(labelThetaP);
+	inputBox.add(entryThetaP);
 
-	box.add(labelThetaD);
-	box.add(entryThetaD);
+	inputBox.add(labelThetaD);
+	inputBox.add(entryThetaD);
 
-	box.add(calculateButton);
+	inputBox.add(calculateButton);
 
 	coordinatesOutputBuffer = Gtk::TextBuffer::create();
 	// Only the first two angles are required
 	coordinatesOutputBuffer->set_text("Please enter the angles");
 
 	coordinatesOutput.set_buffer(coordinatesOutputBuffer);
-	box.add(labelCoordinates);
-	box.add(coordinatesOutput);
+	inputBox.add(labelCoordinates);
+	inputBox.add(coordinatesOutput);
 
 
 	angleOutputBuffer = Gtk::TextBuffer::create();
@@ -53,8 +53,8 @@ GUIForward::GUIForward() :
 	angleOutputBuffer->set_text("Press calculate");
 
 	angleOutput.set_buffer(angleOutputBuffer);
-	box.add(labelAngle);
-	box.add(angleOutput);
+	inputBox.add(labelAngle);
+	inputBox.add(angleOutput);
 
 
 	// The final step is to display this newly created widget...

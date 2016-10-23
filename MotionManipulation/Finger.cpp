@@ -172,8 +172,8 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 
 		newCoordinates = rotateCoordinates(newQ.at(0, 0), newQ.at(1, 0));
 
-		std::cout << newCoordinates.first << ", " << newCoordinates.second << std::endl;
-		std::cout << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
+		//std::cout << newCoordinates.first << ", " << newCoordinates.second << std::endl;
+		//std::cout << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
 	}
 	float thetaM = newQ.at(0, 0);
 	float thetaP = newQ.at(1, 0);
