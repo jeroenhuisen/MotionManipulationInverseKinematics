@@ -7,6 +7,8 @@
 
 #include "MiddleFinger.h"
 
+#include "TestGraph.h"
+
 class GUIInverse : public Gtk::Window {
 public:
 	GUIInverse();
@@ -53,6 +55,8 @@ protected:
 	Gtk::Label labelInterval;
 	Gtk::Entry entryInterval;
 
+	TestGraph graph;
+	SFMLWidget sfmlWidget;
 
 	MiddleFinger mF;
 

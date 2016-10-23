@@ -22,7 +22,9 @@ GUIInverse::GUIInverse() :
 	entryEndCoordinateX(),
 	entryEndCoordinateY(),
 	labelInterval("Interval"),
-	entryInterval()
+	entryInterval(),
+	sfmlWidget(sf::VideoMode(640, 480)),
+	graph(sfmlWidget)
 {
 	// Sets titel of the window
 	set_title("GUI Inverse kinematics");
@@ -85,7 +87,9 @@ GUIInverse::GUIInverse() :
 	extraInputBox.add(labelInterval);
 	extraInputBox.add(entryInterval);
 
+	extraInputBox.add(sfmlWidget);
 
+	
 	// The final step is to display this newly created widget...
 	show_all_children();
 }
@@ -251,6 +255,7 @@ void GUIInverse::on_button_clicked() {
 			y = temp;
 		}
 	}
+	graph.draw();
 }
 
 
