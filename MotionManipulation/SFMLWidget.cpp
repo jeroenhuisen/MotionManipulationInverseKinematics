@@ -99,7 +99,6 @@ void SFMLWidget::on_realize()
 		//make the widget receive expose events
 		m_refGdkWindow->set_user_data(gobj());
 		renderWindow.create(gdk_win32_window_get_impl_hwnd(m_refGdkWindow->gobj()));
-		renderWindow.clear(sf::Color::Black);
 	}
 }
 

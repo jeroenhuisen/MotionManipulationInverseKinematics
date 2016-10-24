@@ -23,8 +23,9 @@ GUIInverse::GUIInverse() :
 	entryEndCoordinateY(),
 	labelInterval("Interval"),
 	entryInterval(),
+	drawBox(Gtk::ORIENTATION_VERTICAL)/*,
 	sfmlWidget(sf::VideoMode(640, 480)),
-	graph(sfmlWidget)
+	graph(sfmlWidget)*/
 {
 	// Sets titel of the window
 	set_title("GUI Inverse kinematics");
@@ -37,6 +38,7 @@ GUIInverse::GUIInverse() :
 
 	box.add(inputBox);
 	box.add(extraInputBox);
+	box.add(drawBox);
 
 	//put it to 128 for no real reason just to limit it without being annoying
 	entryCoordinateX.set_max_length(128);
@@ -87,7 +89,10 @@ GUIInverse::GUIInverse() :
 	extraInputBox.add(labelInterval);
 	extraInputBox.add(entryInterval);
 
-	extraInputBox.add(sfmlWidget);
+	//sfmlWidget.display();
+	//extraInputBox.add(sfmlWidget);
+	graphArea.set_size_request(600, 600);
+	drawBox.add(graphArea);
 
 	
 	// The final step is to display this newly created widget...
@@ -158,6 +163,8 @@ void GUIInverse::on_button_clicked() {
 	thetaMOutputBuffer->set_text(std::to_string(thetaM));
 	thetaPOutputBuffer->set_text(std::to_string(thetaP));
 	thetaDOutputBuffer->set_text(std::to_string(2*thetaP/3));
+
+	graphArea.updateAngles(thetaM, thetaP);
 
 	// extra shit
 
@@ -255,7 +262,6 @@ void GUIInverse::on_button_clicked() {
 			y = temp;
 		}
 	}
-	graph.draw();
 }
 
 

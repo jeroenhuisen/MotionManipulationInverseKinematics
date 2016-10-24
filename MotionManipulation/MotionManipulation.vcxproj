@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Finger.cpp" />
+    <ClCompile Include="GraphArea.cpp" />
     <ClCompile Include="GUIForward.cpp" />
     <ClCompile Include="GUIInverse.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Finger.h" />
+    <ClInclude Include="GraphArea.h" />
     <ClInclude Include="GUIForward.h" />
     <ClInclude Include="GUIInverse.h" />
     <ClInclude Include="MiddleFinger.h" />

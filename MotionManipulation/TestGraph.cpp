@@ -11,7 +11,8 @@ void TestGraph::draw() {
 	sf::RectangleShape line(sf::Vector2f(150, 5));
 	line.rotate(45);
 	widget.renderWindow.draw(line);
-	widget.renderWindow.display();
+	widget.display();
+	//widget.renderWindow.display();
 }
 
 
