@@ -6,7 +6,8 @@
 // Tested on Linux Mint 12.4 and Windows 7
 #if defined(SFML_SYSTEM_WINDOWS)
 
-#include <gtkmm.h>
+#include <gdk/win32/gdkwin32.h>
+
 #define GET_WINDOW_HANDLE_FROM_GDK GDK_WINDOW_HANDLE
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD)
@@ -97,8 +98,7 @@ void SFMLWidget::on_realize()
 
 		//make the widget receive expose events
 		m_refGdkWindow->set_user_data(gobj());
-		
-		renderWindow.create(sf::WindowHandle(m_refGdkWindow->gobj()));
+		renderWindow.create(gdk_win32_window_get_impl_hwnd(m_refGdkWindow->gobj()));
 	}
 }
 

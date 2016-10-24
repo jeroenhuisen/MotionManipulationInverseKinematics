@@ -15,4 +15,5 @@ public:
 	TestGraph(SFMLWidget& widget);
 
 	void draw();
+	void drawTest(float thetaM, float thetaP);
 };

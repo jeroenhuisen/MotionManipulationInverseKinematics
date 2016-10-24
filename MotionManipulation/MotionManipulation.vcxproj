@@ -23,12 +23,16 @@
     <ClCompile Include="GUIForward.cpp" />
     <ClCompile Include="GUIInverse.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SFMLWidget.cpp" />
+    <ClCompile Include="TestGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Finger.h" />
     <ClInclude Include="GUIForward.h" />
     <ClInclude Include="GUIInverse.h" />
     <ClInclude Include="MiddleFinger.h" />
+    <ClInclude Include="SFMLWidget.h" />
+    <ClInclude Include="TestGraph.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1BCDA6D6-B02A-4A55-8039-636540DC3A34}</ProjectGuid>
