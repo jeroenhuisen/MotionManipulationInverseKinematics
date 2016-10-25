@@ -62,8 +62,13 @@ protected:
 	Gtk::Box drawBox;
 	GraphArea graphArea;
 
+	Glib::RefPtr<Gtk::Adjustment> adjustment;
+	Gtk::Scale scale;
+
 	MiddleFinger mF;
 
 	float parseCoordinate(std::string coordinateString);
 	bool isReachable(float coordinateX, float coordinateY);
+
+	bool updateDrawing(Gtk::ScrollType st, double value);
 };

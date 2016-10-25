@@ -23,7 +23,9 @@ GUIInverse::GUIInverse() :
 	entryEndCoordinateY(),
 	labelInterval("Interval"),
 	entryInterval(),
-	drawBox(Gtk::ORIENTATION_VERTICAL)/*,
+	drawBox(Gtk::ORIENTATION_VERTICAL),
+	adjustment(Gtk::Adjustment::create(0.0, 0.0, 101.0, 0.1, 1.0, 1.0)),
+	scale(adjustment, Gtk::ORIENTATION_HORIZONTAL)/*,
 	sfmlWidget(sf::VideoMode(640, 480)),
 	graph(sfmlWidget)*/
 {
@@ -94,6 +96,11 @@ GUIInverse::GUIInverse() :
 	graphArea.set_size_request(600, 600);
 	drawBox.add(graphArea);
 
+	scale.set_digits(2);
+	scale.set_value_pos(Gtk::POS_BOTTOM);
+	scale.set_draw_value();
+	scale.signal_change_value().connect(sigc::mem_fun(*this, &GUIInverse::updateDrawing));
+	drawBox.add(scale);
 	
 	// The final step is to display this newly created widget...
 	show_all_children();
@@ -156,15 +163,17 @@ void GUIInverse::on_button_clicked() {
 	float thetaM = result.first;
 	float thetaP = result.second;
 
-	std::cout << "ThetaM: " << thetaM << std::endl;
-	std::cout << "ThetaP: " << thetaP << std::endl;
+	if (isnan(result.first)) {
+		std::cerr << "Unreachable coordinates: " << coordinateX << ", " << coordinateY << std::endl;
+	}
+	else {
+		std::cout << "x: " << coordinateX  << ", y: " << coordinateY << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
+		thetaMOutputBuffer->set_text(std::to_string(thetaM));
+		thetaPOutputBuffer->set_text(std::to_string(thetaP));
+		thetaDOutputBuffer->set_text(std::to_string(2 * thetaP / 3));
 
-
-	thetaMOutputBuffer->set_text(std::to_string(thetaM));
-	thetaPOutputBuffer->set_text(std::to_string(thetaP));
-	thetaDOutputBuffer->set_text(std::to_string(2*thetaP/3));
-
-	graphArea.updateAngles(thetaM, thetaP);
+		graphArea.updateAngles(thetaM, thetaP);
+	}
 
 	// extra shit
 
@@ -218,6 +227,8 @@ void GUIInverse::on_button_clicked() {
 
 	bool swapX = false;
 
+	
+
 	if (coordinateX == endCoordinateX) {
 		initX = coordinateY;
 		endX = endCoordinateY;
@@ -248,12 +259,14 @@ void GUIInverse::on_button_clicked() {
 		}
 		else {
 			std::pair<float, float> result = mF.inverseRotate(x, y);
-			if (result.first == NAN) { 
+			if (isnan(result.first)) { 
 				std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
 			}
 			else {
+				graphArea.updateAngles(result.first, result.second);
 				std::cout << "x: " << x << ", y: " << y << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
 			}
+			
 		}
 
 		if (swapX) {
@@ -288,4 +301,11 @@ bool GUIInverse::isReachable(float coordinateX, float coordinateY) {
 	else {
 		return false;
 	}
+}
+
+
+
+bool GUIInverse::updateDrawing(Gtk::ScrollType st, double value) {
+	std::cout << value << std::endl;
+	return true;
 }

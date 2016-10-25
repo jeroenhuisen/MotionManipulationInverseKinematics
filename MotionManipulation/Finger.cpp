@@ -163,6 +163,7 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 	std::pair<float, float> newCoordinates;
 	mat newQ = q;
 	int i;
+	std::cout << "Goal coordinates: " << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
 	for (i=0;  !checkErrorValue(newCoordinates, finalCoordinates, errorValue); i++) {
 		std::pair<float, float> result = rotateCoordinates(newQ);
 		resultCoordinates.at(0, 0) = result.first;
@@ -172,8 +173,10 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 
 		newCoordinates = rotateCoordinates(newQ.at(0, 0), newQ.at(1, 0));
 
-		//std::cout << newCoordinates.first << ", " << newCoordinates.second << std::endl;
-		//std::cout << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
+		
+		std::cout << "coordinates: " << newCoordinates.first << ", " << newCoordinates.second << std::endl;
+		std::cout << "angles: " << newQ.at(0, 0) << ", " << newQ.at(1, 0) << std::endl;
+		
 		if (i >= MAX_ITERATIONS) {
 			std::cerr << "Maximum iterations(" << MAX_ITERATIONS << ") reached coordinates couldn't be reached" << std::endl;
 			return std::make_pair(NAN, NAN);
