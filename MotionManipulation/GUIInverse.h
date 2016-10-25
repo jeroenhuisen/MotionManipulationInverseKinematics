@@ -11,6 +11,11 @@
 #include "GraphArea.h"
 
 class GUIInverse : public Gtk::Window {
+private:
+	float startXCoordinate, startYCoordinate;
+	bool getInputValueStartCoordinates();
+	void GUIInverse::calculateAngles(float coordinateX, float coordinateY);
+
 public:
 	GUIInverse();
 	//virtual ~GUIInverse();
@@ -65,10 +70,16 @@ protected:
 	Glib::RefPtr<Gtk::Adjustment> adjustment;
 	Gtk::Scale scale;
 
+	Gtk::Button previousIntervalButton;
+	Gtk::Button nextIntervalButton;
+
 	MiddleFinger mF;
 
 	float parseCoordinate(std::string coordinateString);
 	bool isReachable(float coordinateX, float coordinateY);
 
 	bool updateDrawing(Gtk::ScrollType st, double value);
+
+	void previousInterval();
+	void nextInterval();
 };
