@@ -273,16 +273,16 @@ void GUIInverse::on_button_clicked() {
 
 void GUIInverse::calculateAllAngles() {
 
-
+	graphArea.updateLine(std::make_pair(startCoordinateX, startCoordinateY), std::make_pair(endCoordinateX, endCoordinateY));
 	// extra shit
 
-	/*if (endCoordinateY < startCoordinateX) {
+	/*if (endCoordinateY < startCoordinateY) {
 		float temp = startCoordinateY;
 		startCoordinateY = endCoordinateY;
 		endCoordinateY = temp;
 	}
 
-	if (endCoordinateX < startCoordinateY) {
+	if (endCoordinateX < startCoordinateX) {
 		float temp = startCoordinateX;
 		startCoordinateX = endCoordinateX;
 		endCoordinateX = temp;
@@ -305,7 +305,7 @@ void GUIInverse::calculateAllAngles() {
 
 	bool swapX = false;
 
-	
+
 
 	if (startCoordinateX == endCoordinateX) {
 		initX = startCoordinateY;
@@ -320,8 +320,6 @@ void GUIInverse::calculateAllAngles() {
 		initY = startCoordinateY;
 		endY = endCoordinateY;
 	}
-
-	graphArea.updateLine(std::make_pair(initX, initY), std::make_pair(endX, endY));
 
 	int i = 0;
 	for (float x = initX; x <= endX; x += (endX-initX)/amount) {
