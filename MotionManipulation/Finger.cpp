@@ -163,7 +163,7 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 	std::pair<float, float> newCoordinates;
 	mat newQ = q;
 	int i;
-	std::cout << "Goal coordinates: " << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
+	//std::cout << "Goal coordinates: " << finalCoordinates.at(0, 0) << ", " << finalCoordinates(1, 0) << std::endl;
 	for (i=0;  !checkErrorValue(newCoordinates, finalCoordinates, errorValue); i++) {
 		std::pair<float, float> result = rotateCoordinates(newQ);
 		resultCoordinates.at(0, 0) = result.first;
@@ -174,8 +174,8 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 		newCoordinates = rotateCoordinates(newQ.at(0, 0), newQ.at(1, 0));
 
 		
-		std::cout << "coordinates: " << newCoordinates.first << ", " << newCoordinates.second << std::endl;
-		std::cout << "angles: " << newQ.at(0, 0) << ", " << newQ.at(1, 0) << std::endl;
+		//std::cout << "coordinates: " << newCoordinates.first << ", " << newCoordinates.second << std::endl;
+		//std::cout << "angles: " << newQ.at(0, 0) << ", " << newQ.at(1, 0) << std::endl;
 		
 		if (i >= MAX_ITERATIONS) {
 			std::cerr << "Maximum iterations(" << MAX_ITERATIONS << ") reached coordinates couldn't be reached" << std::endl;
@@ -184,9 +184,9 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 	}
 	float thetaM = newQ.at(0, 0);
 	float thetaP = newQ.at(1, 0);
-	std::cout << "rotations: " << i << std::endl;
-	std::cout << "ThetaM: " << thetaM << std::endl;
-	std::cout << "ThetaP: " << thetaP << std::endl;
+	//std::cout << "rotations: " << i << std::endl;
+	//std::cout << "ThetaM: " << thetaM << std::endl;
+	//std::cout << "ThetaP: " << thetaP << std::endl;
 
 	thetaM = fmod(thetaM, 2*PI);
 	thetaP = fmod(thetaP, 2*PI);
@@ -204,17 +204,13 @@ std::pair<float, float> Finger::calculateInverseRotationNonRecursive(mat finalCo
 		thetaP -= PI;
 	}
 
-	std::cout << "ThetaMOptimized: " << thetaM << std::endl;
-	std::cout << "ThetaPOptimized: " << thetaP << std::endl;
+	//std::cout << "ThetaMOptimized: " << thetaM << std::endl;
+	//std::cout << "ThetaPOptimized: " << thetaP << std::endl;
 
-	if (!(thetaM >= -PI / 3 - FLOAT_ERROR&& thetaM <= PI / 3 + FLOAT_ERROR)) {
-		std::cerr << "ThetaM: " << thetaM << " is outside of the allowed domain" <<std::endl;
-	}
-	if (!(thetaP >= -2*PI / 3 - FLOAT_ERROR && thetaP <= 0 + FLOAT_ERROR)) {
-		std::cerr << "ThetaP: " << thetaP << " is outside of the allowed domain" << std::endl;
-	}
 
-	return std::make_pair(newQ.at(0, 0), newQ.at(1, 0));
+
+	//return std::make_pair(newQ.at(0, 0), newQ.at(1, 0));
+	return std::make_pair(thetaM, thetaP);
 }
 
 

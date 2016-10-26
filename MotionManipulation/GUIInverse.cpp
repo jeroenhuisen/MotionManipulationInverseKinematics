@@ -15,6 +15,8 @@ GUIInverse::GUIInverse() :
 	thetaMOutput(),
 	thetaPOutput(),
 	thetaDOutput(),
+	labelError("Error"),
+	errorOutput(),
 
 	extraInputBox(Gtk::ORIENTATION_VERTICAL),
 	labelEndCoordinateX("End x-coordinate"),
@@ -82,6 +84,12 @@ GUIInverse::GUIInverse() :
 	inputBox.add(labelThetaD);
 	inputBox.add(thetaDOutput);
 
+	errorOutputBuffer = Gtk::TextBuffer::create();
+	errorOutputBuffer->set_text("");
+	errorOutput.set_buffer(errorOutputBuffer);
+	inputBox.add(labelError);
+	inputBox.add(errorOutput);
+
 
 	// Extra end coordinate
 	extraInputBox.add(labelEndCoordinateX);
@@ -142,27 +150,77 @@ bool GUIInverse::getInputValueStartCoordinates() {
 	std::string textCoordinateX = entryCoordinateX.get_text();
 	std::string textCoordinateY = entryCoordinateY.get_text();
 
-	startXCoordinate = parseCoordinate(textCoordinateX);
-	startYCoordinate = parseCoordinate(textCoordinateY);
+	startCoordinateX = parseCoordinate(textCoordinateX);
+	startCoordinateY = parseCoordinate(textCoordinateY);
 
-	if (isnan(startXCoordinate)) {
+	if (isnan(startCoordinateX)) {
 		std::cerr << "Invalid input for X-coordinate" << std::endl;
 		thetaMOutputBuffer->set_text("Invalid input for X-coordinate");
 		return false;
 	}
-	if (isnan(startYCoordinate)) {
+	if (isnan(startCoordinateY)) {
 		std::cerr << "Invalid input for Y-coordinate" << std::endl;
 		thetaPOutputBuffer->set_text("Invalid input for Y-coordinate");
 		return false;
 	}
 
-	std::cout << "input: " << textCoordinateX << ", parsed: " << startXCoordinate << std::endl;
-	std::cout << "input: " << textCoordinateY << ", parsed: " << startYCoordinate << std::endl;
+	std::cout << "input: " << textCoordinateX << ", parsed: " << startCoordinateX << std::endl;
+	std::cout << "input: " << textCoordinateY << ", parsed: " << startCoordinateY << std::endl;
 
-	if (!isReachable(startXCoordinate, startYCoordinate)) {
-		std::cerr << "Unreachable coordinates: " << startXCoordinate << ", " << startYCoordinate << std::endl;
+	if (!isReachable(startCoordinateX, startCoordinateY)) {
+		std::cerr << "Unreachable coordinates: " << startCoordinateX << ", " << startCoordinateY << std::endl;
 		return false;
 	}
+	return true;
+}
+
+bool GUIInverse::getInputValueEndCoordinates() {
+
+
+	std::string textEndCoordinateX = entryEndCoordinateX.get_text();
+	std::string textEndCoordinateY = entryEndCoordinateY.get_text();
+
+	if (textEndCoordinateX == "" || textEndCoordinateY == "") {
+		return false;
+	}
+
+	endCoordinateX = parseCoordinate(textEndCoordinateX);
+	endCoordinateY = parseCoordinate(textEndCoordinateY);
+	
+
+	if (isnan(endCoordinateX)) {
+		std::cerr << "Invalid input for end X-coordinate" << std::endl;
+		//thetaMOutputBuffer->set_text("Invalid input for end X-coordinate");
+		return false;
+	}
+	if (isnan(endCoordinateY)) {
+		std::cerr << "Invalid input for end Y-coordinate" << std::endl;
+		//thetaPOutputBuffer->set_text("Invalid input for end Y-coordinate");
+		return false;
+	}
+
+	std::cout << "input: " << textEndCoordinateX << ", parsed: " << endCoordinateX << std::endl;
+	std::cout << "input: " << textEndCoordinateY << ", parsed: " << endCoordinateY << std::endl;
+
+	return true;
+}
+
+bool GUIInverse::getInputValueInterval() {
+	std::string textInterval = entryInterval.get_text();
+
+	if (textInterval == "") {
+		return false;
+	}
+
+	interval = parseCoordinate(textInterval); //change parse name
+
+	if (isnan(interval)) {
+		std::cerr << "Invalid input for interval" << std::endl;
+		//thetaPOutputBuffer->set_text("Invalid input for interval");
+		return false;
+	}
+	std::cout << "input: " << textInterval << ", parsed: " << interval << std::endl;
+
 	return true;
 }
 
@@ -173,7 +231,18 @@ void GUIInverse::calculateAngles(float coordinateX, float coordinateY) {
 
 	if (isnan(result.first)) {
 		std::cerr << "Unreachable coordinates: " << coordinateX << ", " << coordinateY << std::endl;
+		errorOutputBuffer->set_text("Unreachable coordinates");
 	}
+
+	if (!(thetaM >= -PI / 3 - FLOAT_ERROR&& thetaM <= PI / 3 + FLOAT_ERROR)) {
+		std::cerr << "ThetaM: " << thetaM << " is outside of the allowed domain" << std::endl;
+		errorOutputBuffer->set_text("Unreachable coordinates");
+	}
+	if (!(thetaP >= -2 * PI / 3 - FLOAT_ERROR && thetaP <= 0 + FLOAT_ERROR)) {
+		std::cerr << "ThetaP: " << thetaP << " is outside of the allowed domain" << std::endl;
+		errorOutputBuffer->set_text("Unreachable coordinates");
+	}
+
 	else {
 		std::cout << "x: " << coordinateX << ", y: " << coordinateY << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
 		thetaMOutputBuffer->set_text(std::to_string(thetaM));
@@ -181,67 +250,51 @@ void GUIInverse::calculateAngles(float coordinateX, float coordinateY) {
 		thetaDOutputBuffer->set_text(std::to_string(2 * thetaP / 3));
 
 		graphArea.updateAngles(thetaM, thetaP);
+		errorOutputBuffer->set_text("");
 	}
 }
 
 void GUIInverse::on_button_clicked() {
-	std::cout << "button pressed" << std::endl;
-
 	bool validInput = getInputValueStartCoordinates();
-	
+
 	if (validInput) {
-		calculateAngles(startXCoordinate, startYCoordinate);
+		calculateAngles(startCoordinateX, startCoordinateY);
 	}
+
+	if (getInputValueEndCoordinates() && getInputValueInterval()) {
+		calculateAllAngles();
+	}
+}
 	
 
-	
+void GUIInverse::calculateAllAngles() {
+
 
 	// extra shit
 
-
-	std::string textEndCoordinateX = entryEndCoordinateX.get_text();
-	std::string textEndCoordinateY = entryEndCoordinateY.get_text();
-	std::string textInterval = entryInterval.get_text();
-
-	float endCoordinateX = parseCoordinate(textEndCoordinateX);
-	float endCoordinateY = parseCoordinate(textEndCoordinateY);
-	float interval = parseCoordinate(textInterval); //change parse name
-
-	if (isnan(endCoordinateX)) {
-		std::cerr << "Invalid input for end X-coordinate" << std::endl;
-		//thetaMOutputBuffer->set_text("Invalid input for end X-coordinate");
-		return;
-	}
-	if (isnan(endCoordinateY)) {
-		std::cerr << "Invalid input for end Y-coordinate" << std::endl;
-		//thetaPOutputBuffer->set_text("Invalid input for end Y-coordinate");
-		return;
-	}
-
-	if (isnan(interval)) {
-		std::cerr << "Invalid input for interval" << std::endl;
-		//thetaPOutputBuffer->set_text("Invalid input for interval");
-		return;
-	}
-
-	std::cout << "input: " << textEndCoordinateX << ", parsed: " << endCoordinateX << std::endl;
-	std::cout << "input: " << textEndCoordinateY << ", parsed: " << endCoordinateY << std::endl;
-	std::cout << "input: " << textInterval       << ", parsed: " << interval       << std::endl;
-
-	if (endCoordinateY < startXCoordinate) {
-		float temp = startYCoordinate;
-		startYCoordinate = endCoordinateY;
+	if (endCoordinateY < startCoordinateX) {
+		float temp = startCoordinateY;
+		startCoordinateY = endCoordinateY;
 		endCoordinateY = temp;
 	}
 
-	if (endCoordinateX < startYCoordinate) {
-		float temp = startXCoordinate;
-		startXCoordinate = endCoordinateX;
+	if (endCoordinateX < startCoordinateY) {
+		float temp = startCoordinateX;
+		startCoordinateX = endCoordinateX;
 		endCoordinateX = temp;
 	}
 
-	float length = sqrt(pow((endCoordinateX - startXCoordinate), 2) + pow((endCoordinateY - startYCoordinate), 2));
+	float length = sqrt(pow((endCoordinateX - startCoordinateX), 2) + pow((endCoordinateY - startCoordinateY), 2));
 	float amount = length / interval; //amount of steps
+
+	anglesArrayLength = amount;
+	currentPositionAnglesArray = anglesArrayLength;
+
+	if (anglesArray != NULL) {
+		delete[] anglesArray;
+	}
+	anglesArray = new std::pair<float, float>[amount];
+
 
 	float initX, initY;
 	float endX, endY;
@@ -250,20 +303,21 @@ void GUIInverse::on_button_clicked() {
 
 	
 
-	if (startXCoordinate == endCoordinateX) {
-		initX = startYCoordinate;
+	if (startCoordinateX == endCoordinateX) {
+		initX = startCoordinateY;
 		endX = endCoordinateY;
-		initY = startXCoordinate;
+		initY = startCoordinateX;
 		endY = endCoordinateX;
 		swapX = true;
 	}
 	else {
-		initX = startXCoordinate;
+		initX = startCoordinateX;
 		endX = endCoordinateX;
-		initY = startYCoordinate;
+		initY = startCoordinateY;
 		endY = endCoordinateY;
 	}
 
+	int i = 0;
 	for (float x = initX; x <= endX; x += (endX-initX)/amount) {
 		float y = linear(initX, endX, initY, endY, interval, x);
 
@@ -284,9 +338,11 @@ void GUIInverse::on_button_clicked() {
 				std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
 			}
 			else {
-				graphArea.updateAngles(result.first, result.second);
+				//graphArea.updateAngles(result.first, result.second);
 				std::cout << "x: " << x << ", y: " << y << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
 			}
+			// even if its nan add it to the array
+			anglesArray[i] = result;
 			
 		}
 
@@ -295,6 +351,7 @@ void GUIInverse::on_button_clicked() {
 			x = y;
 			y = temp;
 		}
+		i++;
 	}
 }
 
@@ -333,8 +390,11 @@ bool GUIInverse::updateDrawing(Gtk::ScrollType st, double value) {
 
 
 void GUIInverse::nextInterval() {
-
-	//graphArea.updateAngles(newThetaM, newThetaP);
+	currentPositionAnglesArray++;
+	if (currentPositionAnglesArray >= anglesArrayLength) {
+		currentPositionAnglesArray = 0;
+	}
+	graphArea.updateAngles(anglesArray[currentPositionAnglesArray].first, anglesArray[currentPositionAnglesArray].second);
 }
 
 void GUIInverse::previousInterval() {

@@ -12,9 +12,24 @@
 
 class GUIInverse : public Gtk::Window {
 private:
-	float startXCoordinate, startYCoordinate;
+	float startCoordinateX, startCoordinateY;
+	float endCoordinateX, endCoordinateY;
+
+	std::pair<float, float>* anglesArray;
+	int anglesArrayLength;
+	int currentPositionAnglesArray;
+
+	float interval;
+
+
 	bool getInputValueStartCoordinates();
-	void GUIInverse::calculateAngles(float coordinateX, float coordinateY);
+	bool getInputValueEndCoordinates();
+	bool getInputValueInterval();
+
+	void calculateAngles(float coordinateX, float coordinateY);
+	void calculateAllAngles();
+
+	
 
 public:
 	GUIInverse();
@@ -47,6 +62,10 @@ protected:
 	Gtk::Label labelThetaD;
 	Gtk::TextView thetaDOutput;
 	Glib::RefPtr<Gtk::TextBuffer> thetaDOutputBuffer;
+
+	Gtk::Label labelError;
+	Gtk::TextView errorOutput;
+	Glib::RefPtr<Gtk::TextBuffer> errorOutputBuffer;
 
 	// extra input
 	Gtk::Box box;
