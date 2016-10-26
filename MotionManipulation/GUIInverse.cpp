@@ -27,7 +27,12 @@ GUIInverse::GUIInverse() :
 	entryInterval(),
 	drawBox(Gtk::ORIENTATION_VERTICAL),
 	previousIntervalButton("<"),
-	nextIntervalButton(">")
+	nextIntervalButton(">"),
+
+	labelCurrentCoordinateX("Current x-coordinate"),
+	labelCurrentCoordinateY("Current y-coordinate"),
+	currentCoordinateXOutput(),
+	currentCoordinateYOutput()
 
 {
 	// Sets titel of the window
@@ -97,6 +102,16 @@ GUIInverse::GUIInverse() :
 
 	extraInputBox.add(labelInterval);
 	extraInputBox.add(entryInterval);
+
+	extraInputBox.add(labelCurrentCoordinateX);
+	currentCoordinateXOutputBuffer = Gtk::TextBuffer::create();
+	currentCoordinateXOutput.set_buffer(currentCoordinateXOutputBuffer);
+	extraInputBox.add(currentCoordinateXOutput);
+
+	extraInputBox.add(labelCurrentCoordinateY);
+	currentCoordinateYOutputBuffer = Gtk::TextBuffer::create();
+	currentCoordinateYOutput.set_buffer(currentCoordinateYOutputBuffer);
+	extraInputBox.add(currentCoordinateYOutput);
 
 	//sfmlWidget.display();
 	//extraInputBox.add(sfmlWidget);
@@ -378,7 +393,7 @@ void GUIInverse::nextInterval() {
 	if (currentPositionAnglesArray >= anglesArrayLength) {
 		currentPositionAnglesArray = 0;
 	}
-	graphArea.updateAngles(anglesArray[currentPositionAnglesArray].first, anglesArray[currentPositionAnglesArray].second);
+	//graphArea.updateAngles(anglesArray[currentPositionAnglesArray].first, anglesArray[currentPositionAnglesArray].second);
 	updateValues(anglesArray[currentPositionAnglesArray]);
 }
 
@@ -405,6 +420,11 @@ void GUIInverse::updateValues(std::pair<float, float> result) {
 		thetaPOutputBuffer->set_text(std::to_string(thetaP));
 		thetaDOutputBuffer->set_text(std::to_string(2 * thetaP / 3));
 
+		// VERY LAZY programming
+		std::pair<float, float> coordinates = mF.rotateCoordinates(thetaM, thetaP);
+		currentCoordinateXOutputBuffer->set_text(std::to_string(coordinates.first));
+		currentCoordinateYOutputBuffer->set_text(std::to_string(coordinates.second));
+
 		graphArea.updateAngles(thetaM, thetaP);
 		errorOutputBuffer->set_text("");
 	}
@@ -415,6 +435,6 @@ void GUIInverse::previousInterval() {
 	if (currentPositionAnglesArray <= 0) {
 		currentPositionAnglesArray = anglesArrayLength;
 	}
-	graphArea.updateAngles(anglesArray[currentPositionAnglesArray].first, anglesArray[currentPositionAnglesArray].second);
+	//graphArea.updateAngles(anglesArray[currentPositionAnglesArray].first, anglesArray[currentPositionAnglesArray].second);
 	updateValues(anglesArray[currentPositionAnglesArray]);
 }

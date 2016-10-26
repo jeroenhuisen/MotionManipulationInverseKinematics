@@ -79,9 +79,14 @@ protected:
 
 	Gtk::Label labelInterval;
 	Gtk::Entry entryInterval;
+	
+	Gtk::Label labelCurrentCoordinateX;
+	Gtk::Label labelCurrentCoordinateY;
 
-	//TestGraph graph;
-	//SFMLWidget sfmlWidget;
+	Gtk::TextView currentCoordinateXOutput;
+	Glib::RefPtr<Gtk::TextBuffer> currentCoordinateXOutputBuffer;
+	Gtk::TextView currentCoordinateYOutput;
+	Glib::RefPtr<Gtk::TextBuffer> currentCoordinateYOutputBuffer;
 
 	Gtk::Box drawBox;
 	GraphArea graphArea;
