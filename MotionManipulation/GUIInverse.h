@@ -15,7 +15,7 @@ private:
 	float startCoordinateX, startCoordinateY;
 	float endCoordinateX, endCoordinateY;
 
-	std::pair<float, float>* anglesArray;
+	std::vector<std::pair<float, float>> anglesArray;
 	int anglesArrayLength;
 	int currentPositionAnglesArray;
 

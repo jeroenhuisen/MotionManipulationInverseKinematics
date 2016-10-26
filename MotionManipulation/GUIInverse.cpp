@@ -290,11 +290,10 @@ void GUIInverse::calculateAllAngles() {
 	anglesArrayLength = amount;
 	currentPositionAnglesArray = anglesArrayLength;
 
-	if (anglesArray != NULL) {
+	/*if (anglesArray != NULL) {
 		delete[] anglesArray;
-	}
-	anglesArray = new std::pair<float, float>[amount];
-
+	}*/
+	anglesArray.resize(amount+1);
 
 	float initX, initY;
 	float endX, endY;
