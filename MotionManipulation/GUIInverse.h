@@ -86,9 +86,6 @@ protected:
 	Gtk::Box drawBox;
 	GraphArea graphArea;
 
-	Glib::RefPtr<Gtk::Adjustment> adjustment;
-	Gtk::Scale scale;
-
 	Gtk::Button previousIntervalButton;
 	Gtk::Button nextIntervalButton;
 
@@ -98,6 +95,7 @@ protected:
 	bool isReachable(float coordinateX, float coordinateY);
 
 	bool updateDrawing(Gtk::ScrollType st, double value);
+	void updateValues(std::pair<float, float> result);
 
 	void previousInterval();
 	void nextInterval();

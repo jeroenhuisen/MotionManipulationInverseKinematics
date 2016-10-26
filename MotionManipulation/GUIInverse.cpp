@@ -27,11 +27,8 @@ GUIInverse::GUIInverse() :
 	entryInterval(),
 	drawBox(Gtk::ORIENTATION_VERTICAL),
 	previousIntervalButton("<"),
-	nextIntervalButton(">"),
-	adjustment(Gtk::Adjustment::create(0.0, 0.0, 101.0, 0.1, 1.0, 1.0)),
-	scale(adjustment, Gtk::ORIENTATION_HORIZONTAL)/*,
-	sfmlWidget(sf::VideoMode(640, 480)),
-	graph(sfmlWidget)*/
+	nextIntervalButton(">")
+
 {
 	// Sets titel of the window
 	set_title("GUI Inverse kinematics");
@@ -110,12 +107,6 @@ GUIInverse::GUIInverse() :
 	drawBox.add(nextIntervalButton);
 	previousIntervalButton.signal_clicked().connect(sigc::mem_fun(*this, &GUIInverse::previousInterval));
 	drawBox.add(previousIntervalButton);
-
-	scale.set_digits(2);
-	scale.set_value_pos(Gtk::POS_BOTTOM);
-	scale.set_draw_value();
-	scale.signal_change_value().connect(sigc::mem_fun(*this, &GUIInverse::updateDrawing));
-	drawBox.add(scale);
 	
 	// The final step is to display this newly created widget...
 	show_all_children();
@@ -129,18 +120,16 @@ float linear(float startX, float endX, float startY, float endY, float interval,
 
 	return startY + (endY - startY) / amount * current;*/
 	
+	float slope;
 	
-	float slope = (endY - startY) / (endX - startX);
-	/*if (endY < startY) {
-		float temp = startY;
-		startY = endY;
-		endY = temp;
+	/*if (startY < 0) {
+		slope = (endY + startY) / (endX - startX);
 	}
-	if (endX < startX) {
-		float temp = startX;
-		startX = endX;
-		endX = temp;
-	}*/
+	else {*/
+
+		slope = (endY - startY) / (endX - startX);
+	//}
+
 
 	return slope * (currentX - startX) + startY;
 }
@@ -272,7 +261,7 @@ void GUIInverse::calculateAllAngles() {
 
 	// extra shit
 
-	if (endCoordinateY < startCoordinateX) {
+	/*if (endCoordinateY < startCoordinateX) {
 		float temp = startCoordinateY;
 		startCoordinateY = endCoordinateY;
 		endCoordinateY = temp;
@@ -282,7 +271,7 @@ void GUIInverse::calculateAllAngles() {
 		float temp = startCoordinateX;
 		startCoordinateX = endCoordinateX;
 		endCoordinateX = temp;
-	}
+	}*/
 
 	float length = sqrt(pow((endCoordinateX - startCoordinateX), 2) + pow((endCoordinateY - startCoordinateY), 2));
 	float amount = length / interval; //amount of steps
@@ -294,6 +283,7 @@ void GUIInverse::calculateAllAngles() {
 		delete[] anglesArray;
 	}*/
 	anglesArray.resize(amount+1);
+
 
 	float initX, initY;
 	float endX, endY;
@@ -316,6 +306,8 @@ void GUIInverse::calculateAllAngles() {
 		endY = endCoordinateY;
 	}
 
+	graphArea.updateLine(std::make_pair(initX, initY), std::make_pair(endX, endY));
+
 	int i = 0;
 	for (float x = initX; x <= endX; x += (endX-initX)/amount) {
 		float y = linear(initX, endX, initY, endY, interval, x);
@@ -327,11 +319,11 @@ void GUIInverse::calculateAllAngles() {
 			y = temp;
 		}
 
-		if (!isReachable(x, y)) {
+		/*if (!isReachable(x, y)) {
 			std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl; 
 			break;
 		}
-		else {
+		else {*/
 			std::pair<float, float> result = mF.inverseRotate(x, y);
 			if (isnan(result.first)) { 
 				std::cerr << "Unreachable coordinates: " << x << ", " << y << std::endl;
@@ -343,7 +335,7 @@ void GUIInverse::calculateAllAngles() {
 			// even if its nan add it to the array
 			anglesArray[i] = result;
 			
-		}
+		//}
 
 		if (swapX) {
 			float temp = x;
@@ -381,21 +373,48 @@ bool GUIInverse::isReachable(float coordinateX, float coordinateY) {
 }
 
 
-
-bool GUIInverse::updateDrawing(Gtk::ScrollType st, double value) {
-	std::cout << value << std::endl;
-	return true;
-}
-
-
 void GUIInverse::nextInterval() {
 	currentPositionAnglesArray++;
 	if (currentPositionAnglesArray >= anglesArrayLength) {
 		currentPositionAnglesArray = 0;
 	}
 	graphArea.updateAngles(anglesArray[currentPositionAnglesArray].first, anglesArray[currentPositionAnglesArray].second);
+	updateValues(anglesArray[currentPositionAnglesArray]);
+}
+
+void GUIInverse::updateValues(std::pair<float, float> result) {
+	float thetaM = result.first;
+	float thetaP = result.second;
+	if (isnan(result.first)) {
+		std::cerr << "Unreachable coordinates ";// << coordinateX << ", " << coordinateY << std::endl;
+		errorOutputBuffer->set_text("Unreachable coordinates");
+	}
+
+	if (!(thetaM >= -PI / 3 - FLOAT_ERROR&& thetaM <= PI / 3 + FLOAT_ERROR)) {
+		std::cerr << "ThetaM: " << thetaM << " is outside of the allowed domain" << std::endl;
+		errorOutputBuffer->set_text("Unreachable coordinates");
+	}
+	if (!(thetaP >= -2 * PI / 3 - FLOAT_ERROR && thetaP <= 0 + FLOAT_ERROR)) {
+		std::cerr << "ThetaP: " << thetaP << " is outside of the allowed domain" << std::endl;
+		errorOutputBuffer->set_text("Unreachable coordinates");
+	}
+
+	else {
+		//std::cout << "x: " << coordinateX << ", y: " << coordinateY << " thetaM: " << result.first << " and thetaP: " << result.second << std::endl;
+		thetaMOutputBuffer->set_text(std::to_string(thetaM));
+		thetaPOutputBuffer->set_text(std::to_string(thetaP));
+		thetaDOutputBuffer->set_text(std::to_string(2 * thetaP / 3));
+
+		graphArea.updateAngles(thetaM, thetaP);
+		errorOutputBuffer->set_text("");
+	}
 }
 
 void GUIInverse::previousInterval() {
-
+	currentPositionAnglesArray--;
+	if (currentPositionAnglesArray <= 0) {
+		currentPositionAnglesArray = anglesArrayLength;
+	}
+	graphArea.updateAngles(anglesArray[currentPositionAnglesArray].first, anglesArray[currentPositionAnglesArray].second);
+	updateValues(anglesArray[currentPositionAnglesArray]);
 }

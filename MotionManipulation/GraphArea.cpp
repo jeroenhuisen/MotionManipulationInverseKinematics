@@ -26,6 +26,19 @@ void GraphArea::updateAngles(float thetaM, float thetaP) {
 	}
 }
 
+void GraphArea::updateLine(std::pair<float, float> startCoordinates, std::pair<float, float> endCoordinates) {
+	this->startCoordinates = startCoordinates;
+	this->endCoordinates = endCoordinates;
+
+	auto win = get_window();
+	if (win)
+	{
+		Gdk::Rectangle r(0, 0, get_allocation().get_width(),
+			get_allocation().get_height());
+		win->invalidate_rect(r, false);
+	}
+}
+
 bool GraphArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 	Gtk::Allocation allocation = get_allocation();
@@ -44,8 +57,25 @@ bool GraphArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	float initialX = xc/2;
 	float initialY = yc;
 
+
+	//test line
+	/*cr->set_line_width(5.0);
+	cr->set_source_rgb(0.0, 0.0, 0.0);
+	//float test = initialY + startCoordinates.second * 3;
+	cr->move_to(initialX, initialY);
+	cr->line_to(initialX + 200, initialY);
+	cr->stroke();*/
+
+	// Draw line
+	cr->set_line_width(5.0);
+	cr->set_source_rgb(0.0, 0.0, 0.0);
+	cr->move_to(initialX + startCoordinates.first*3, initialY - startCoordinates.second * 3);
+	cr->line_to(initialX + endCoordinates.first*3, initialY - endCoordinates.second*3);
+	cr->stroke();
+
+	// Draw finger 
 	cr->set_line_width(10.0);
-	// draw red lines out from the center of the window
+
 	cr->set_source_rgb(0.8, 0.0, 0.0);
 	cr->move_to(initialX, initialY);
 	cr->line_to(initialX + l1*cos(thetaM), initialY + l1*-sin(thetaM));

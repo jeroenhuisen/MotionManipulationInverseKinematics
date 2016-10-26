@@ -9,10 +9,13 @@ class GraphArea : public Gtk::DrawingArea
 {
 private:
 	float thetaM, thetaP, thetaD;
+
+	std::pair<float, float> startCoordinates, endCoordinates;
 public:
 	GraphArea();
 	virtual ~GraphArea();
 	void updateAngles(float thetaM, float thetaP);
+	void updateLine(std::pair<float, float> startCoordinates, std::pair<float, float> endCoordinates);
 
 protected:
 	//Override default signal handler:
